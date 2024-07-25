@@ -3,9 +3,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import time
 from linkedin import LinkedIn
+from Extension.youchat import YouChat
+# from youchat import YouChat
+from tkinter_display import display_report
 
-# cmd : "C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\chrome.exe" 
-# --remote-debugging-port=9222 --user-data-dir="C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\User Data"
+# cmd : "C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\User Data"
 
 # Path to your ChromeDriver executable
 CHROMEDRIVER_PATH = "C:/Users/jd100/OneDrive/Desktop/Boomconsole/Chrome/chromedriver-win64/chromedriver.exe"
@@ -32,10 +34,19 @@ print(driver.title)
 # linkedIn = "https://www.linkedin.com/in/saugatsingh/"
 # driver.get(linkedIn)
 # Create an instance of LinkedIn class and perform the check
-linkedin_instance = LinkedIn(driver)
+# linkedin_instance = LinkedIn(driver)
 # linkedin_instance.check_linkedin()
-linkedin_profile_url = "https://www.linkedin.com/in/saugatsingh/"
-linkedin_instance.get_linkedin_data(linkedin_profile_url)
+# linkedin_profile_url = "https://www.linkedin.com/in/saugatsingh/"
+# linkedin_instance.get_linkedin_data(linkedin_profile_url)
+
+# Create an instance of YouChat and call the method
+youchat_instance = YouChat(driver)
+report = youchat_instance.check_boom()
+# report = youchat_instance.check_boom_all()
+# report = youchat_instance.discover_you_dom()
+
+# Display Report with tkinter
+# display_report(report)
 
 # Close the browser
 driver.quit()

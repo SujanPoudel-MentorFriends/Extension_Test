@@ -34,7 +34,7 @@ class LinkedIn:
         # Wait for the page to load
         time.sleep(5)
 
-        self.linkedin_class = fetch_api()
+        self.linkedin_class = fetch_api()['linkedin']
         self.image_dom = self.linkedin_class['linkedin']['image']
         self.about_exper_educ_dom = self.linkedin_class['linkedin']['about_exper_educ']
         self.username_dom = self.linkedin_class['linkedin']['username']
@@ -103,78 +103,113 @@ class LinkedIn:
         sections = self.driver.find_elements(By.CSS_SELECTOR, ".artdeco-card.pv-profile-card.break-words")
         # Loop over the found sections and print their text content
         for section in sections:
-            if section.text.strip() == 'About':
-                print("Section Text:", section.text)
-            else:
-                try:
-                    extra = section.find_element(By.XPATH, ".//span[@aria-hidden='true']")
-                    print("Extra Element Text:", extra.text)
-                except:
-                    print("No extra element found in this section")
+            try:
+                extra = section.find_element(By.XPATH, ".//span[@aria-hidden='true']")
+                # print("Extra Element Text:", extra.text)
+
+                if extra.text == "About":
+                    text_section = section.find_element(By.CSS_SELECTOR, ".display-flex.ph5.pv3").text
+                    final_about = text_section
+
+                if extra.text == "Experience":
+                    experience = []
+                    li_elements = section.find_elements(By.CSS_SELECTOR, ".artdeco-list__item")
+                    # print("LI Elements : ", li_elements.text)
+                    for li in li_elements:
+                        # print(li)
+                        title = li.find_element(By.XPATH, ".//span[@aria-hidden='true']").text
+                        details = li.text
+                        data = {
+                            "title" : title,
+                            "all" : details
+                        }
+                        experience.append(data)
+
+                    final_experience = experience
+
+                if extra.text == "Education":
+                    education = []
+                    li_elements = section.find_elements(By.CSS_SELECTOR, ".artdeco-list__item")
+                    for li in li_elements:
+                        institue = li.find_element(By.XPATH, ".//span[@aria-hidden='true']").text
+                        details = li.text
+                        # Find all elements within the li that are visually hidden
+                        hidden_elements = li.find_elements(By.XPATH, ".//*[contains(@class, 'visually-hidden')]")
+                        # Subtract the text of visually hidden elements from the details
+                        for hidden_element in hidden_elements:
+                            details = details.replace(hidden_element.text, '')
+                
+                        data = {
+                            "institute" : institue,
+                            "all" : details
+                        }
+                        education.append(data)
+
+                    final_education = education
             
+            except:
+                print("No extra element found in this section")
 
-        final_about = None
-        final_experience = None
-        final_education = None
 
-        print("ABOUT : \n ", final_about)
-        print("Experience : \n ", final_experience)
-        print("Education : \n ", final_education)
+        # print("ABOUT : \n ", final_about)
+        # print("Experience : \n ", final_experience)
+        # print("Education : \n ", final_education)
+
         # Initialize email and phone variables
         final_email = None
         final_phone = None
 
-        # def open_contact_modal():
-        #     nonlocal final_email, final_phone 
-        #     # Open the LinkedIn contact modal and retrieve contact details
-        #     contact_info_link = self.driver.find_element(By.ID, "top-card-text-details-contact-info")
-        #     if contact_info_link:
-        #         contact_info_link.click()
+        def open_contact_modal():
+            nonlocal final_email, final_phone 
+            # Open the LinkedIn contact modal and retrieve contact details
+            contact_info_link = self.driver.find_element(By.ID, "top-card-text-details-contact-info")
+            if contact_info_link:
+                contact_info_link.click()
+                time.sleep(3)
                 
-        #         print("Contact Type DOM : ", self.contact_type_dom)
-        #         contact_info_elements = self.driver.find_elements(By.XPATH, f"//section[@class='{self.contact_type_dom}']")
-                
-        #         # print("Contact Info : ", contact_info_elements)
+                print("Contact Type DOM : ", self.contact_type_dom)
+                contact_info_elements = self.driver.find_elements(By.XPATH, f"//section[@class='{self.contact_type_dom}']")
+                print("Contact Info : ", contact_info_elements)
 
-        #         # Extract email
-        #         for element in contact_info_elements:
-        #             text = element.text
-        #             # print("Element text:", text)
-        #             # Extract phone number
-        #             phone_number_pattern = re.compile(r'\d+')
+                # Extract email
+                for element in contact_info_elements:
+                    text = element.text
+                    # print("Element text:", text)
+                    # Extract phone number
+                    phone_number_pattern = re.compile(r'\d+')
         
-        #             if "Email" in text:
-        #                 final_email = text.replace("Email", "").strip()
-        #             elif "Phone" in text:
-        #                 match = phone_number_pattern.search(text)
-        #                 if match:
-        #                     final_phone = match.group()
+                    if "Email" in text:
+                        final_email = text.replace("Email", "").strip()
+                    elif "Phone" in text:
+                        match = phone_number_pattern.search(text)
+                        if match:
+                            final_phone = match.group()
 
 
-        #         print("Email : ", final_email)
-        #         print("Phone : ", final_phone)
+                # print("Email : ", final_email)
+                # print("Phone : ", final_phone)
 
-        #         # Close the modal
-        #         close_modal = self.driver.find_element(By.CSS_SELECTOR, self.closeModal_dom)
-        #         if close_modal:
-        #             close_modal.click()
+                # Close the modal
+                close_modal = self.driver.find_element(By.CSS_SELECTOR, self.closeModal_dom)
+                if close_modal:
+                    close_modal.click()
                     
-        # open_contact_modal()
+        open_contact_modal()
 
-        # final_data = {
-        #     "name": user_name,
-        #     "email": final_email,
-        #     "phone": [{"number": final_phone}],
-        #     "avatar": final_image,
-        #     "about": final_about,
-        #     "experience": final_experience,
-        #     "education": final_education,
-        #     "isActive": True,
-        #     "tag": "prospect",
-        #     "notes": [{}],
-        #     "addresses": [{"location": f"{country} {city}".strip()}],
-        # }
+        final_data = {
+            "name": user_name,
+            "email": final_email,
+            "phone": [{"number": final_phone}],
+            "avatar": final_image,
+            "about": final_about,
+            "experience": final_experience,
+            "education": final_education,
+            "isActive": True,
+            "tag": "prospect",
+            "notes": [{}],
+            "addresses": [{"location": f"{country} {city}".strip()}],
+        }
         
-        # print("finalData", final_data)
-        # return final_data
+        print("finalData", final_data)
+        return final_data
 
