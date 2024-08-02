@@ -2,17 +2,20 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import time
-from linkedin import LinkedIn
-from Extension.youchat import YouChat
+# from linkedin import LinkedIn
+from login import LoginTest
+from chatgpt import ChatgptTest
+# from Extension.youchat import YouChat
 # from youchat import YouChat
-from tkinter_display import display_report
+# from tkinter_display import display_report
 
-# cmd : "C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\Users\jd100\OneDrive\Desktop\Boomconsole\Chrome\chrome-win64\User Data"
+# cmd : "C:\Users\Mentor Server 21\Desktop\Extension Test\Chrome\chrome-win64\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\Users\Mentor Server 21\Desktop\Extension Test\Chrome\chromedriver-win64\User Data"
 
 # Path to your ChromeDriver executable
-CHROMEDRIVER_PATH = "C:/Users/jd100/OneDrive/Desktop/Boomconsole/Chrome/chromedriver-win64/chromedriver.exe"
+CHROMEDRIVER_PATH = "C:/Users/Mentor Server 21/Desktop/Extension Test/Chrome/chromedriver-win64/chromedriver.exe"
 # Path to your Chrome binary
-CHROME_PATH = "C:/Users/jd100/OneDrive/Desktop/Boomconsole/Chrome/chrome-win64/chrome.exe"
+CHROME_PATH = "C:/Users/Mentor Server 21/Desktop/Extension Test/Chrome/chrome-win64/chrome.exe"
+
 
 # Set up Chrome options to use the specified binary
 chrome_options = Options()
@@ -39,9 +42,19 @@ print(driver.title)
 # linkedin_profile_url = "https://www.linkedin.com/in/saugatsingh/"
 # linkedin_instance.get_linkedin_data(linkedin_profile_url)
 
+login_instance = LoginTest(driver)
+login_instance.login_web("deepikatester@mentorfriends.com","freeschema")
+
+# Open a new tab and switch to it
+driver.execute_script("window.open('');")
+driver.switch_to.window(driver.window_handles[1])
+
+chatgpt_instance = ChatgptTest(driver)
+chatgpt_instance.ask_chatgpt("Hello")
+
 # Create an instance of YouChat and call the method
-youchat_instance = YouChat(driver)
-report = youchat_instance.check_boom()
+# youchat_instance = YouChat(driver)
+# report = youchat_instance.check_boom()
 # report = youchat_instance.check_boom_all()
 # report = youchat_instance.discover_you_dom()
 
