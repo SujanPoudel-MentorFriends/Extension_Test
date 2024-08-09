@@ -50,7 +50,10 @@ driver.execute_script("window.open('');")
 driver.switch_to.window(driver.window_handles[1])
 
 chatgpt_instance = ChatgptTest(driver)
-chatgpt_instance.ask_chatgpt("Hello")
+# chatgpt_instance.ask_chatgpt("Hello")
+chatgpt_instance.boom()
+# chatgpt_instance.boom_chats()
+# chatgpt_instance.boom_all()
 
 # Create an instance of YouChat and call the method
 # youchat_instance = YouChat(driver)
